@@ -1,24 +1,22 @@
 # Flashcards
 
-Une petite application Flutter pour réviser avec des cartes : une question d’un côté, sa réponse de l’autre.
+A small Flutter app for studying with flashcards. Each card has a question and an answer.
 
-## Fonctionnalités
+## Features
 
-- Afficher la réponse d’une carte
-- Passer à la carte précédente ou suivante
-- Ajouter, modifier et supprimer des cartes
+- Show the answer to a question
+- Move to the previous or next card
+- Add, edit, and delete cards
 
-## Lancer l’application
+## Run the app
 
-Installe Flutter, puis ouvre un terminal dans le dossier `frontend` et lance :
+Install Flutter, open a terminal in the frontend folder, and run:
 
-```bash
-flutter pub get
-flutter run
-```
+    flutter pub get
+    flutter run
 
-Choisis un appareil ou un émulateur si Flutter le demande.
+Choose a device or emulator if Flutter asks you to.
 
-## À savoir
+## Note
 
-Les cartes ajoutées ou modifiées restent disponibles pendant l’utilisation de l’application. Elles ne sont pas sauvegardées après sa fermeture.
+Cards stay available while the app is open. Changes are not saved after the app closes.
