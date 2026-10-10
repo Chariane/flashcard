@@ -1,16 +1,24 @@
-# frontend
+# Flashcards
 
-A new Flutter project.
+Une petite application Flutter pour réviser avec des cartes : une question d’un côté, sa réponse de l’autre.
 
-## Getting Started
+## Fonctionnalités
 
-This project is a starting point for a Flutter application.
+- Afficher la réponse d’une carte
+- Passer à la carte précédente ou suivante
+- Ajouter, modifier et supprimer des cartes
 
-A few resources to get you started if this is your first Flutter project:
+## Lancer l’application
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+Installe Flutter, puis ouvre un terminal dans le dossier `frontend` et lance :
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+```bash
+flutter pub get
+flutter run
+```
+
+Choisis un appareil ou un émulateur si Flutter le demande.
+
+## À savoir
+
+Les cartes ajoutées ou modifiées restent disponibles pendant l’utilisation de l’application. Elles ne sont pas sauvegardées après sa fermeture.

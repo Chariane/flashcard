@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../models/flashcard.dart';
-import '../services/flashcard_service.dart';
 import '../widgets/flashcard_widget.dart';
 import 'flashcard_form_screen.dart';
 
@@ -13,185 +12,139 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final FlashcardService service = FlashcardService();
-
-  List<Flashcard> flashcards = [];
+  final List<Flashcard> flashcards = [
+    const Flashcard(
+      id: 1,
+      question: 'Quelle est la capitale du Bénin ?',
+      answer: 'Porto-Novo',
+    ),
+    const Flashcard(
+      id: 2,
+      question: 'Combien font 8 × 7 ?',
+      answer: '56',
+    ),
+    const Flashcard(
+      id: 3,
+      question: 'Quelle planète est surnommée la planète rouge ?',
+      answer: 'Mars',
+    ),
+  ];
 
   int currentIndex = 0;
 
-  bool isLoading = true;
-
-  @override
-  void initState() {
-    super.initState();
-    loadFlashcards();
-  }
-
-  Future<void> loadFlashcards() async {
-    try {
-      final data = await service.getFlashcards();
-
-      setState(() {
-        flashcards = data;
-        isLoading = false;
-      });
-    } catch (e) {
-      setState(() {
-        isLoading = false;
-      });
-
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Erreur : $e'),
-          ),
-        );
-      }
-    }
-  }
-
-  Future<void> deleteCurrentFlashcard() async {
-    if (flashcards.isEmpty) {
-      return;
-    }
-
-    final flashcard = flashcards[currentIndex];
-
-    try {
-      await service.deleteFlashcard(flashcard.id);
-
-      setState(() {
-        flashcards.removeAt(currentIndex);
-
-        if (currentIndex >= flashcards.length) {
-          currentIndex = flashcards.length - 1;
-        }
-      });
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Erreur : $e'),
-          ),
-        );
-      }
-    }
-  }
-
   Future<void> openForm({Flashcard? flashcard}) async {
-    final result = await Navigator.push(
+    final result = await Navigator.push<Flashcard>(
       context,
       MaterialPageRoute(
-        builder: (context) => FlashcardFormScreen(
-          flashcard: flashcard,
-        ),
+        builder: (context) => FlashcardFormScreen(flashcard: flashcard),
       ),
     );
 
-    if (result == true) {
-      await loadFlashcards();
-    }
+    if (!mounted || result == null) return;
+
+    setState(() {
+      if (flashcard == null) {
+        final nextId = flashcards.isEmpty
+            ? 1
+            : flashcards.map((card) => card.id).reduce((a, b) => a > b ? a : b) + 1;
+        flashcards.add(
+          Flashcard(id: nextId, question: result.question, answer: result.answer),
+        );
+        currentIndex = flashcards.length - 1;
+      } else {
+        final index = flashcards.indexWhere((card) => card.id == flashcard.id);
+        if (index != -1) flashcards[index] = result;
+      }
+    });
   }
 
-  void nextFlashcard() {
-    if (flashcards.isEmpty) {
-      return;
-    }
-
-    if (currentIndex < flashcards.length - 1) {
-      setState(() {
-        currentIndex++;
-      });
-    }
-  }
-
-  void previousFlashcard() {
-    if (flashcards.isEmpty) {
-      return;
-    }
-
-    if (currentIndex > 0) {
-      setState(() {
+  void deleteCurrentFlashcard() {
+    if (flashcards.isEmpty) return;
+    setState(() {
+      flashcards.removeAt(currentIndex);
+      if (currentIndex >= flashcards.length && currentIndex > 0) {
         currentIndex--;
-      });
+      }
+    });
+  }
+
+  void showNext() {
+    if (currentIndex < flashcards.length - 1) {
+      setState(() => currentIndex++);
+    }
+  }
+
+  void showPrevious() {
+    if (currentIndex > 0) {
+      setState(() => currentIndex--);
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final hasCards = flashcards.isNotEmpty;
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Flashcard Quiz'),
+        title: const Text('Flashcards'),
         actions: [
-          if (flashcards.isNotEmpty)
+          if (hasCards)
             IconButton(
-              icon: const Icon(Icons.edit),
-              onPressed: () {
-                openForm(
-                  flashcard: flashcards[currentIndex],
-                );
-              },
+              tooltip: 'Modifier cette carte',
+              icon: const Icon(Icons.edit_outlined),
+              onPressed: () => openForm(flashcard: flashcards[currentIndex]),
             ),
-          if (flashcards.isNotEmpty)
+          if (hasCards)
             IconButton(
-              icon: const Icon(Icons.delete),
+              tooltip: 'Supprimer cette carte',
+              icon: const Icon(Icons.delete_outline),
               onPressed: deleteCurrentFlashcard,
             ),
         ],
       ),
-
-      body: isLoading
-          ? const Center(
-              child: CircularProgressIndicator(),
-            )
-          : flashcards.isEmpty
-              ? const Center(
-                  child: Text(
-                    'Aucune flashcard disponible.',
-                    style: TextStyle(fontSize: 18),
-                  ),
-                )
-              : Column(
+      body: Center(
+        child: hasCards
+            ? Padding(
+                padding: const EdgeInsets.all(24),
+                child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     FlashcardWidget(
-                      key: ValueKey(
-                        flashcards[currentIndex].id,
-                      ),
+                      key: ValueKey(flashcards[currentIndex].id),
                       flashcard: flashcards[currentIndex],
                     ),
-
-                    const SizedBox(height: 30),
-
+                    const SizedBox(height: 24),
                     Row(
-                      mainAxisAlignment:
-                          MainAxisAlignment.spaceEvenly,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        ElevatedButton(
-                          onPressed: currentIndex > 0
-                              ? previousFlashcard
+                        OutlinedButton.icon(
+                          onPressed: currentIndex > 0 ? showPrevious : null,
+                          icon: const Icon(Icons.arrow_back),
+                          label: const Text('Précédente'),
+                        ),
+                        Text('${currentIndex + 1} / ${flashcards.length}'),
+                        OutlinedButton.icon(
+                          onPressed: currentIndex < flashcards.length - 1
+                              ? showNext
                               : null,
-                          child: const Text('Previous'),
-                        ),
-
-                        Text(
-                          '${currentIndex + 1} / ${flashcards.length}',
-                        ),
-
-                        ElevatedButton(
-                          onPressed:
-                              currentIndex <
-                                      flashcards.length - 1
-                                  ? nextFlashcard
-                                  : null,
-                          child: const Text('Next'),
+                          icon: const Icon(Icons.arrow_forward),
+                          label: const Text('Suivante'),
                         ),
                       ],
                     ),
                   ],
                 ),
-
+              )
+            : const Padding(
+                padding: EdgeInsets.all(32),
+                child: Text(
+                  'Aucune carte pour le moment. Appuie sur + pour en créer une.',
+                  textAlign: TextAlign.center,
+                ),
+              ),
+      ),
       floatingActionButton: FloatingActionButton(
+        tooltip: 'Ajouter une carte',
         onPressed: () => openForm(),
         child: const Icon(Icons.add),
       ),
