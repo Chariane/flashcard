@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../models/flashcard.dart';
+import '../theme/app_colors.dart';
 
 class FlashcardFormScreen extends StatefulWidget {
   final Flashcard? flashcard;
@@ -31,7 +32,6 @@ class _FlashcardFormScreenState extends State<FlashcardFormScreen> {
 
   void saveFlashcard() {
     if (!_formKey.currentState!.validate()) return;
-
     Navigator.pop(
       context,
       Flashcard(
@@ -53,51 +53,187 @@ class _FlashcardFormScreenState extends State<FlashcardFormScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(isEditing ? 'Modifier la carte' : 'Nouvelle carte'),
+        title: Text(isEditing ? 'Modifier une carte' : 'Nouvelle carte'),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            children: [
-              TextFormField(
-                controller: questionController,
-                autofocus: true,
-                textInputAction: TextInputAction.next,
-                decoration: const InputDecoration(
-                  labelText: 'Question',
-                  border: OutlineInputBorder(),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.fromLTRB(22, 12, 22, 30),
+          child: Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 620),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      width: 58,
+                      height: 58,
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFEAE8FA),
+                        borderRadius: BorderRadius.circular(19),
+                      ),
+                      child: Icon(
+                        isEditing
+                            ? Icons.edit_note_rounded
+                            : Icons.add_card_rounded,
+                        color: AppColors.primary,
+                        size: 30,
+                      ),
+                    ),
+                    const SizedBox(height: 22),
+                    Text(
+                      isEditing
+                          ? 'Peaufine ta carte'
+                          : 'Crée une nouvelle carte',
+                      style: const TextStyle(
+                        color: AppColors.ink,
+                        fontSize: 27,
+                        height: 1.2,
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: -.6,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      isEditing
+                          ? 'Tu peux modifier la question ou sa réponse.'
+                          : 'Une bonne question aide ta mémoire à faire le reste.',
+                      style: const TextStyle(
+                        color: AppColors.muted,
+                        height: 1.5,
+                      ),
+                    ),
+                    const SizedBox(height: 27),
+                    const _FieldHeading(
+                      number: '01',
+                      title: 'Le recto',
+                      subtitle: 'La question à te poser',
+                    ),
+                    const SizedBox(height: 10),
+                    TextFormField(
+                      controller: questionController,
+                      autofocus: true,
+                      textCapitalization: TextCapitalization.sentences,
+                      textInputAction: TextInputAction.next,
+                      minLines: 2,
+                      maxLines: 4,
+                      decoration: const InputDecoration(
+                        hintText: 'Ex. Quelle est la capitale du Bénin ?',
+                        alignLabelWithHint: true,
+                      ),
+                      validator: (value) =>
+                          value == null || value.trim().isEmpty
+                          ? 'Saisis une question pour le recto.'
+                          : null,
+                    ),
+                    const SizedBox(height: 24),
+                    const _FieldHeading(
+                      number: '02',
+                      title: 'Le verso',
+                      subtitle: 'La réponse à retenir',
+                    ),
+                    const SizedBox(height: 10),
+                    TextFormField(
+                      controller: answerController,
+                      textCapitalization: TextCapitalization.sentences,
+                      textInputAction: TextInputAction.done,
+                      minLines: 2,
+                      maxLines: 5,
+                      decoration: const InputDecoration(
+                        hintText: 'Ex. Porto-Novo',
+                        alignLabelWithHint: true,
+                      ),
+                      validator: (value) =>
+                          value == null || value.trim().isEmpty
+                          ? 'Saisis une réponse pour le verso.'
+                          : null,
+                      onFieldSubmitted: (_) => saveFlashcard(),
+                    ),
+                    const SizedBox(height: 28),
+                    SizedBox(
+                      width: double.infinity,
+                      child: FilledButton.icon(
+                        onPressed: saveFlashcard,
+                        icon: Icon(
+                          isEditing ? Icons.check_rounded : Icons.add_rounded,
+                        ),
+                        label: Text(
+                          isEditing
+                              ? 'Enregistrer les changements'
+                              : 'Ajouter à ma collection',
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    Center(
+                      child: TextButton(
+                        onPressed: () => Navigator.pop(context),
+                        child: const Text('Annuler'),
+                      ),
+                    ),
+                  ],
                 ),
-                validator: (value) => value == null || value.trim().isEmpty
-                    ? 'Saisis une question'
-                    : null,
               ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: answerController,
-                minLines: 2,
-                maxLines: 5,
-                decoration: const InputDecoration(
-                  labelText: 'Réponse',
-                  border: OutlineInputBorder(),
-                ),
-                validator: (value) => value == null || value.trim().isEmpty
-                    ? 'Saisis une réponse'
-                    : null,
-              ),
-              const SizedBox(height: 24),
-              SizedBox(
-                width: double.infinity,
-                child: FilledButton(
-                  onPressed: saveFlashcard,
-                  child: Text(isEditing ? 'Enregistrer' : 'Ajouter la carte'),
-                ),
-              ),
-            ],
+            ),
           ),
         ),
       ),
+    );
+  }
+}
+
+class _FieldHeading extends StatelessWidget {
+  final String number;
+  final String title;
+  final String subtitle;
+
+  const _FieldHeading({
+    required this.number,
+    required this.title,
+    required this.subtitle,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Container(
+          width: 31,
+          height: 31,
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            color: AppColors.primary,
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Text(
+            number,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 11,
+              fontWeight: FontWeight.w800,
+            ),
+          ),
+        ),
+        const SizedBox(width: 11),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              title,
+              style: const TextStyle(
+                color: AppColors.ink,
+                fontSize: 14,
+                fontWeight: FontWeight.w800,
+              ),
+            ),
+            Text(
+              subtitle,
+              style: const TextStyle(color: Color(0xFF898B9D), fontSize: 11),
+            ),
+          ],
+        ),
+      ],
     );
   }
 }

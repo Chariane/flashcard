@@ -8,4 +8,18 @@ class Flashcard {
     required this.question,
     required this.answer,
   });
+
+  factory Flashcard.fromJson(Map<String, dynamic> json) {
+    return Flashcard(
+      id: json['id'] as int,
+      question: json['question'] as String,
+      answer: json['answer'] as String,
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'question': question,
+    'answer': answer,
+  };
 }
