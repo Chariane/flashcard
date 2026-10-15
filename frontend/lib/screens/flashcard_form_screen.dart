@@ -70,7 +70,7 @@ class _FlashcardFormScreenState extends State<FlashcardFormScreen> {
                       width: 58,
                       height: 58,
                       decoration: BoxDecoration(
-                        color: const Color(0xFFEAE8FA),
+                        color: Theme.of(context).colorScheme.secondaryContainer,
                         borderRadius: BorderRadius.circular(19),
                       ),
                       child: Icon(
@@ -86,8 +86,8 @@ class _FlashcardFormScreenState extends State<FlashcardFormScreen> {
                       isEditing
                           ? 'Peaufine ta carte'
                           : 'Crée une nouvelle carte',
-                      style: const TextStyle(
-                        color: AppColors.ink,
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.onSurface,
                         fontSize: 27,
                         height: 1.2,
                         fontWeight: FontWeight.w800,
@@ -99,8 +99,8 @@ class _FlashcardFormScreenState extends State<FlashcardFormScreen> {
                       isEditing
                           ? 'Tu peux modifier la question ou sa réponse.'
                           : 'Une bonne question aide ta mémoire à faire le reste.',
-                      style: const TextStyle(
-                        color: AppColors.muted,
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
                         height: 1.5,
                       ),
                     ),
@@ -221,15 +221,18 @@ class _FieldHeading extends StatelessWidget {
           children: [
             Text(
               title,
-              style: const TextStyle(
-                color: AppColors.ink,
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.onSurface,
                 fontSize: 14,
                 fontWeight: FontWeight.w800,
               ),
             ),
             Text(
               subtitle,
-              style: const TextStyle(color: Color(0xFF898B9D), fontSize: 11),
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+                fontSize: 11,
+              ),
             ),
           ],
         ),

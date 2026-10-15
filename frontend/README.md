@@ -8,6 +8,7 @@ A small Flutter app for studying with flashcards. Each card has a question and a
 - Move to the previous or next card
 - Add, edit, and delete cards
 - Save your collection locally on the current browser or device
+- Switch between light and dark mode; the selection is remembered on the device
 
 ## Run the app in Chrome
 

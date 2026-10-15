@@ -7,7 +7,14 @@ import '../widgets/flashcard_widget.dart';
 import 'flashcard_form_screen.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  final bool isDark;
+  final VoidCallback onThemeToggle;
+
+  const HomeScreen({
+    super.key,
+    required this.isDark,
+    required this.onThemeToggle,
+  });
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -233,20 +240,26 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _TopBar(cardCount: flashcards.length),
+                  _TopBar(
+                    cardCount: flashcards.length,
+                    isDark: widget.isDark,
+                    onThemeToggle: widget.onThemeToggle,
+                  ),
                   if (_storageError != null) ...[
                     const SizedBox(height: 16),
                     Container(
                       width: double.infinity,
                       padding: const EdgeInsets.all(14),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFFFF4E5),
+                        color: Theme.of(context).colorScheme.tertiaryContainer,
                         borderRadius: BorderRadius.circular(14),
                       ),
                       child: Text(
                         _storageError!,
-                        style: const TextStyle(
-                          color: Color(0xFF81520A),
+                        style: TextStyle(
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.onTertiaryContainer,
                           fontSize: 12,
                         ),
                       ),
@@ -255,8 +268,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   const SizedBox(height: 38),
                   Text(
                     hasCards ? 'À toi de jouer ✨' : 'On commence ? ✨',
-                    style: const TextStyle(
-                      color: AppColors.ink,
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.onSurface,
                       fontSize: 32,
                       height: 1.15,
                       fontWeight: FontWeight.w800,
@@ -268,8 +281,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     hasCards
                         ? 'Une question à la fois. Le progrès suit.'
                         : 'Crée ta première carte et lance ta révision.',
-                    style: const TextStyle(
-                      color: AppColors.muted,
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
                       fontSize: 15,
                     ),
                   ),
@@ -277,10 +290,12 @@ class _HomeScreenState extends State<HomeScreen> {
                   if (hasCards) ...[
                     Row(
                       children: [
-                        const Text(
+                        Text(
                           'TA SESSION',
                           style: TextStyle(
-                            color: Color(0xFF89899D),
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurfaceVariant,
                             fontSize: 10,
                             letterSpacing: 1.4,
                             fontWeight: FontWeight.w800,
@@ -289,8 +304,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         const Spacer(),
                         Text(
                           'Carte ${currentIndex + 1} sur ${flashcards.length}',
-                          style: const TextStyle(
-                            color: AppColors.ink,
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.onSurface,
                             fontSize: 12,
                             fontWeight: FontWeight.w700,
                           ),
@@ -303,7 +318,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       child: LinearProgressIndicator(
                         value: progress,
                         minHeight: 6,
-                        backgroundColor: const Color(0xFFE7E5F2),
+                        backgroundColor: Theme.of(
+                          context,
+                        ).colorScheme.surfaceContainerHighest,
                         valueColor: const AlwaysStoppedAnimation(
                           AppColors.primary,
                         ),
@@ -332,14 +349,20 @@ class _HomeScreenState extends State<HomeScreen> {
                             vertical: 10,
                           ),
                           decoration: BoxDecoration(
-                            color: Colors.white,
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.surfaceContainerLow,
                             borderRadius: BorderRadius.circular(30),
-                            border: Border.all(color: const Color(0xFFE9E7F1)),
+                            border: Border.all(
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.outlineVariant,
+                            ),
                           ),
                           child: Text(
                             '${currentIndex + 1}  /  ${flashcards.length}',
-                            style: const TextStyle(
-                              color: AppColors.ink,
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.onSurface,
                               fontSize: 13,
                               fontWeight: FontWeight.w800,
                             ),
@@ -370,10 +393,13 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                   const SizedBox(height: 14),
-                  const Center(
+                  Center(
                     child: Text(
                       'Tes cartes sont enregistrées sur cet appareil.',
-                      style: TextStyle(color: Color(0xFF9899A8), fontSize: 11),
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        fontSize: 11,
+                      ),
                     ),
                   ),
                 ],
@@ -388,8 +414,14 @@ class _HomeScreenState extends State<HomeScreen> {
 
 class _TopBar extends StatelessWidget {
   final int cardCount;
+  final bool isDark;
+  final VoidCallback onThemeToggle;
 
-  const _TopBar({required this.cardCount});
+  const _TopBar({
+    required this.cardCount,
+    required this.isDark,
+    required this.onThemeToggle,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -413,13 +445,13 @@ class _TopBar extends StatelessWidget {
           ),
         ),
         const SizedBox(width: 12),
-        const Column(
+        Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               'Mémoria',
               style: TextStyle(
-                color: AppColors.ink,
+                color: Theme.of(context).colorScheme.onSurface,
                 fontSize: 16,
                 fontWeight: FontWeight.w800,
               ),
@@ -427,7 +459,7 @@ class _TopBar extends StatelessWidget {
             Text(
               'STUDIO DE RÉVISION',
               style: TextStyle(
-                color: Color(0xFF888A9B),
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
                 fontSize: 9,
                 letterSpacing: 1.15,
                 fontWeight: FontWeight.w700,
@@ -439,26 +471,38 @@ class _TopBar extends StatelessWidget {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 9),
           decoration: BoxDecoration(
-            color: const Color(0xFFEAE8FA),
+            color: Theme.of(context).colorScheme.secondaryContainer,
             borderRadius: BorderRadius.circular(24),
           ),
           child: Row(
             children: [
-              const Icon(
+              Icon(
                 Icons.layers_rounded,
-                color: AppColors.primary,
+                color: Theme.of(context).colorScheme.onSecondaryContainer,
                 size: 15,
               ),
               const SizedBox(width: 6),
               Text(
                 '$cardCount cartes',
-                style: const TextStyle(
-                  color: AppColors.primary,
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSecondaryContainer,
                   fontSize: 11,
                   fontWeight: FontWeight.w800,
                 ),
               ),
             ],
+          ),
+        ),
+        const SizedBox(width: 4),
+        IconButton(
+          tooltip: isDark ? 'Activer le mode clair' : 'Activer le mode sombre',
+          onPressed: onThemeToggle,
+          icon: Icon(
+            isDark ? Icons.light_mode_rounded : Icons.dark_mode_rounded,
+          ),
+          style: IconButton.styleFrom(
+            foregroundColor: Theme.of(context).colorScheme.onSurfaceVariant,
+            minimumSize: const Size(42, 42),
           ),
         ),
       ],
@@ -484,10 +528,12 @@ class _NavigationButton extends StatelessWidget {
       onPressed: onPressed,
       icon: Icon(icon),
       style: IconButton.styleFrom(
-        foregroundColor: AppColors.primary,
-        backgroundColor: const Color(0xFFEAE8FA),
-        disabledForegroundColor: const Color(0xFFB8B7C5),
-        disabledBackgroundColor: const Color(0xFFF0EFF5),
+        foregroundColor: Theme.of(context).colorScheme.onSecondaryContainer,
+        backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
+        disabledForegroundColor: Theme.of(
+          context,
+        ).colorScheme.onSurface.withValues(alpha: .35),
+        disabledBackgroundColor: Theme.of(context).colorScheme.surfaceContainer,
         minimumSize: const Size(48, 48),
       ),
     );
@@ -505,39 +551,42 @@ class _EmptyState extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 26, vertical: 42),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).colorScheme.surfaceContainerLow,
         borderRadius: BorderRadius.circular(26),
-        border: Border.all(color: const Color(0xFFE9E7F1)),
+        border: Border.all(color: Theme.of(context).colorScheme.outlineVariant),
       ),
       child: Column(
         children: [
           Container(
             width: 78,
             height: 78,
-            decoration: const BoxDecoration(
-              color: Color(0xFFEAE8FA),
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.secondaryContainer,
               shape: BoxShape.circle,
             ),
-            child: const Icon(
+            child: Icon(
               Icons.style_rounded,
-              color: AppColors.primary,
+              color: Theme.of(context).colorScheme.onSecondaryContainer,
               size: 34,
             ),
           ),
           const SizedBox(height: 18),
-          const Text(
+          Text(
             'Ta collection est vide',
             style: TextStyle(
-              color: AppColors.ink,
+              color: Theme.of(context).colorScheme.onSurface,
               fontSize: 19,
               fontWeight: FontWeight.w800,
             ),
           ),
           const SizedBox(height: 7),
-          const Text(
+          Text(
             'Ajoute une question et sa réponse pour commencer à réviser.',
             textAlign: TextAlign.center,
-            style: TextStyle(color: AppColors.muted, height: 1.5),
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+              height: 1.5,
+            ),
           ),
           const SizedBox(height: 19),
           TextButton.icon(
